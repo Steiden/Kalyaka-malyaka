@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Каляка-маляка</title>
+        <link rel="stylesheet" href="./css/style.css"/>
+    </head>
+    <body>
+        <main class="main">
+            <form action="#" class="form" id="form">
+                <h1 class="form__title">Расчет стоимости</h1>
+                <section class="form__content">
+                    <div class="input-container">
+                        <label for="monthSelect" class="input-container__about">Месяц:</label>
+                        <select name="month" id="monthSelect" class="input-container__input">
+                            <option value="" selected disabled></option>
+                            <option value="January">Январь</option>
+                            <option value="February">Февраль</option>
+                            <option value="March">Март</option>
+                            <option value="April">Апрель</option>
+                            <option value="May">Май</option>
+                            <option value="June">Июнь</option>
+                            <option value="July">Июль</option>
+                            <option value="August">Август</option>
+                            <option value="September">Сентябрь</option>
+                            <option value="October">Октябрь</option>
+                            <option value="November">Ноябрь</option>
+                            <option value="December">Декабрь</option>
+                        </select>
+                    </div>
+                    <div class="input-container">
+                        <label for="priceOneDay" class="input-container__about">Стоимость 1 дня:</label>
+                        <input type="text" name="priceOneDay" id="priceOneDay" class="input-container__input" disabled />
+                    </div>
+                    <div class="input-container">
+                        <label for="fullNameChild" class="input-container__about">ФИО ребенка:</label>
+                        <input type="text" name="fullNameChild" id="fullNameChild" class="input-container__input" maxlength="100"/>
+                    </div>
+                    <div class="input-container">
+                        <label for="countDays" class="input-container__about">Количество дней:</label>
+                        <input type="text" name="countDays" maxlength="2" id="countDays" class="input-container__input" />
+                    </div>
+                    <div class="input-container input-container--colspan-2">
+                        <label for="otherService" class="input-container__about">Дополнительная услуга:</label>
+                        <select name="otherService" id="otherService" class="input-container__input">
+                            <option value="" selected></option>
+                            <option value="FunnyBall">Веселый мяч</option>
+                            <option value="KalyakaMalyaka">Каляка-маляка</option>
+                            <option value="Vocal">Вокал</option>
+                        </select>
+                    </div>
+                </section>
+                <div class="button-container-wrapper">
+                    <div class="button-container">
+                        <button class="button submit-btn" type="submit" id="submit-btn">Расчитать</button>
+                        <button class="button reset-btn" type="reset" id="reset-btn">Очистить</button>
+                    </div>
+                </div>
+            </form>
+        </main>
+
+        <!-- The Modal -->
+        <article id="modal" class="modal">
+            <!-- Modal content -->
+            <section class="modal__content" id="modalContent">
+                <span class="modal__close" id="modalClose">&times;</span>
+                <p>Some text in the Modal...</p>
+            </section>
+        </article>
+
+        <script src="./js/script.js" type="module"></script>
+    </body>
+</html>

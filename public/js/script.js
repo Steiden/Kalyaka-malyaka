@@ -21,10 +21,10 @@ form.addEventListener("submit", (e) => {
     if (res)
         res.remove();
     // Получение введенных значений
-    const month = new Month(EnumMonth[monthSelect.value]);
+    let month = new Month(EnumMonth[monthSelect.value]);
     let fullNameChild = fullNameChildInput.value;
-    const countDays = +countDaysInput.value;
-    const otherService = new Service(EnumService[otherServiceSelect.value]);
+    let countDays = +countDaysInput.value;
+    let otherService = new Service(EnumService[otherServiceSelect.value]);
     //? Проверка на заполненнность всех полей
     if (!month || !fullNameChild || !countDays) {
         modal.setText("Заполните все поля!").show();
@@ -40,6 +40,29 @@ form.addEventListener("submit", (e) => {
         modal.setText("Некорректное ФИО ребенка!").show();
         return;
     }
+    // Формирование данных для отправки
+    const dataToFetch = {
+        month: month.Month,
+        fullNameChild: fullNameChild,
+        countDays: countDays,
+        otherService: otherService.Service ? otherService.Service : ''
+    };
+    // * Отпаврка запроса на сервер
+    fetch("/api/add-order", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json; charset=UTF-8"
+        },
+        body: JSON.stringify(dataToFetch)
+    })
+        .then(res => {
+        if (res.ok)
+            modal.setText("Заявка успешно отправлена!").show();
+    })
+        .catch(err => {
+        console.log(err);
+    });
+    // TODO Сделать отправку данных на сервер отдельной кнопкой
     const resultBlock = /*html*/ `
         <div class="result-container input-container input-container--colspan-2" id="resultBlock">
             <label for="result" class="result-container__title">Сумма к оплате за месяц:</label>
@@ -51,7 +74,6 @@ form.addEventListener("submit", (e) => {
     // Вывод суммы
     const resultInput = document.getElementById("result");
     resultInput.value = String(calcPriceService(month, otherService, countDays)) + "₽";
-    form.submit();
 });
 //* Очистка формы
 form.addEventListener("reset", (e) => {

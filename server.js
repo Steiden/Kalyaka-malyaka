@@ -1,10 +1,21 @@
 const express = require("express");
+const mongoose = require('mongoose');
 const morgan = require("morgan");
+const bodyParser = require("body-parser");
 const path = require("path");
+
+const apiOrderRoutes = require("./routes/api-order-routes");
 
 const app = express();
 
 const PORT = 3000;
+const db = `mongodb+srv://steiden:C3C2SZJLKh9rAsID@main.hdz1pvg.mongodb.net/Kalyaka-Malyaka?retryWrites=true&w=majority`;
+
+// * Подключение к БД
+mongoose
+    .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then((res) => console.log("Connected to DB"))
+    .catch((err) => console.log(err))
 
 // * Создание сервера
 app.listen(PORT, (error) => {
@@ -13,23 +24,19 @@ app.listen(PORT, (error) => {
 
 // * Настройка сервера
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms"));
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(express.static("./public"));
 
-// * GET запросы
+// * Загрузка главной страницы
 app.get("/", (req, res) => {
     res.sendFile(path.resolve(__dirname, "public/views", "index.html"));
 });
 
-// * POST запросы
-app.post("/", (req, res) => {
-    let { month, fullNameChild, countDays, otherService } = req.body;
+// * Подключение маршрутов
+app.use(apiOrderRoutes);
 
-    // * Преобразование ФИО ребенка
-    fullNameChild = fullNameChild
-        .split(" ")
-        .map((child) => child.charAt(0).toUpperCase() + child.slice(1))
-        .join(" ");
-
-    console.log(month, fullNameChild, countDays, otherService);
+app.use((res, req) => {
+    res.status(404);
 });

@@ -40,3 +40,5 @@ app.use(apiOrderRoutes);
 app.use((res, req) => {
     res.status(404);
 });
+
+// TODO Реализовать подгрузку Месяца и Сервиса с БД

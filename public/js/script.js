@@ -22,7 +22,7 @@ form.addEventListener("submit", (e) => {
         res.remove();
     // Получение введенных значений
     const month = new Month(EnumMonth[monthSelect.value]);
-    const fullNameChild = fullNameChildInput.value;
+    let fullNameChild = fullNameChildInput.value;
     const countDays = +countDaysInput.value;
     const otherService = new Service(EnumService[otherServiceSelect.value]);
     //? Проверка на заполненнность всех полей
@@ -31,7 +31,12 @@ form.addEventListener("submit", (e) => {
         return;
     }
     //? Проверка на корректность ФИО ребенка
-    if (fullNameChild.split(' ').length != 3) {
+    if (fullNameChild.split(" ").length != 3) {
+        let [name, surname, patronymic] = fullNameChild.split(" ");
+        if (!name || !surname || !patronymic) {
+            modal.setText("Некорректное ФИО ребенка!").show();
+            return;
+        }
         modal.setText("Некорректное ФИО ребенка!").show();
         return;
     }
@@ -46,6 +51,7 @@ form.addEventListener("submit", (e) => {
     // Вывод суммы
     const resultInput = document.getElementById("result");
     resultInput.value = String(calcPriceService(month, otherService, countDays)) + "₽";
+    form.submit();
 });
 //* Очистка формы
 form.addEventListener("reset", (e) => {
@@ -62,14 +68,14 @@ monthSelect.addEventListener("change", () => {
 //* Ограничение по количеству дней
 countDaysInput.addEventListener("input", constraintCountDaysInput);
 //* Возможен ввод только числовых значений
-countDaysInput.addEventListener("input", e => inputOnlyDigit(e));
+countDaysInput.addEventListener("input", (e) => inputOnlyDigit(e));
 //* Когда пользователь нажимает мне модального окна
-window.addEventListener("click", e => {
+window.addEventListener("click", (e) => {
     if (e.target === modal.ModalWindow)
         modal.close();
 });
 //* Когда пользователь нажал клавишу клавиатуры
-window.addEventListener("keydown", e => {
+window.addEventListener("keydown", (e) => {
     // Закрыть модальное окно, если нажата клавиша Escape
     if (e.key === "Escape")
         modal.close();

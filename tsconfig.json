@@ -107,13 +107,13 @@
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   },
   "files": [
-    "./ts/modules/caclualtionData.ts",
-    "./ts/modules/calculation.ts",
-    "./ts/modules/classes.ts",
-    "./ts/modules/enumerables.ts",
-    "./ts/modules/modal.ts",
-    "./ts/modules/validation.ts",
+    "./public/ts/modules/caclualtionData.ts",
+    "./public/ts/modules/calculation.ts",
+    "./public/ts/modules/classes.ts",
+    "./public/ts/modules/enumerables.ts",
+    "./public/ts/modules/modal.ts",
+    "./public/ts/modules/validation.ts",
     
-    "./ts/script.ts"
+    "./public/ts/script.ts"
   ]
 }

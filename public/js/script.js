@@ -1,7 +1,7 @@
 import { EnumMonth, EnumService } from "./modules/enumerables.js";
-import { Month, Service } from "./modules/classes.js";
+import { Month, Service } from "./modules/calculationClasses.js";
 import { calcPriceService } from "./modules/calculation.js";
-import { inputOnlyDigit } from "./modules/validation.js";
+import { Validation } from "./modules/validation.js";
 import { Modal } from "./modules/modal.js";
 // Получение элементов формы
 const form = document.getElementById("form");
@@ -10,9 +10,43 @@ const priceOneDayInput = document.getElementById("priceOneDay");
 const fullNameChildInput = document.getElementById("fullNameChild");
 const countDaysInput = document.getElementById("countDays");
 const otherServiceSelect = document.getElementById("otherService");
+const sendButton = document.getElementById("send-btn");
 // Формирование модального окна
 const modal = new Modal(document.getElementById("modal"), document.getElementById("modalClose"), document.getElementById("modalContent"));
 // ! События
+//* Отправка данных на сервер
+sendButton.addEventListener("click", () => {
+    // Получение введенных значений
+    let { month, fullNameChild, countDays, otherService } = getInputValues();
+    //? Проверка введенных значений
+    const checkInput = checkInputData();
+    if (!checkInput.status) {
+        modal.setError().setText(checkInput.text).show();
+        return;
+    }
+    // Формирование данных для отправки
+    const dataToFetch = {
+        month: month.Month,
+        fullNameChild: fullNameChild,
+        countDays: countDays,
+        otherService: otherService.Service ? otherService.Service : "",
+    };
+    // * Отпаврка запроса на сервер
+    fetch("/api/add-order", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json; charset=UTF-8",
+        },
+        body: JSON.stringify(dataToFetch),
+    })
+        .then((res) => {
+        if (res.ok)
+            modal.setSuccess().setText("Заявка успешно отправлена!").show();
+    })
+        .catch((err) => {
+        console.log(err);
+    });
+});
 //* При отправке формы
 form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -21,48 +55,14 @@ form.addEventListener("submit", (e) => {
     if (res)
         res.remove();
     // Получение введенных значений
-    let month = new Month(EnumMonth[monthSelect.value]);
-    let fullNameChild = fullNameChildInput.value;
-    let countDays = +countDaysInput.value;
-    let otherService = new Service(EnumService[otherServiceSelect.value]);
-    //? Проверка на заполненнность всех полей
-    if (!month || !fullNameChild || !countDays) {
-        modal.setText("Заполните все поля!").show();
+    let { month, fullNameChild, countDays, otherService } = getInputValues();
+    //? Проверка введенных значений
+    const checkInput = checkInputData();
+    if (!checkInput.status) {
+        modal.setError().setText(checkInput.text).show();
         return;
     }
-    //? Проверка на корректность ФИО ребенка
-    if (fullNameChild.split(" ").length != 3) {
-        let [name, surname, patronymic] = fullNameChild.split(" ");
-        if (!name || !surname || !patronymic) {
-            modal.setText("Некорректное ФИО ребенка!").show();
-            return;
-        }
-        modal.setText("Некорректное ФИО ребенка!").show();
-        return;
-    }
-    // Формирование данных для отправки
-    const dataToFetch = {
-        month: month.Month,
-        fullNameChild: fullNameChild,
-        countDays: countDays,
-        otherService: otherService.Service ? otherService.Service : ''
-    };
-    // * Отпаврка запроса на сервер
-    fetch("/api/add-order", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json; charset=UTF-8"
-        },
-        body: JSON.stringify(dataToFetch)
-    })
-        .then(res => {
-        if (res.ok)
-            modal.setText("Заявка успешно отправлена!").show();
-    })
-        .catch(err => {
-        console.log(err);
-    });
-    // TODO Сделать отправку данных на сервер отдельной кнопкой
+    // Формирование блока с результатом вычислений
     const resultBlock = /*html*/ `
         <div class="result-container input-container input-container--colspan-2" id="resultBlock">
             <label for="result" class="result-container__title">Сумма к оплате за месяц:</label>
@@ -90,7 +90,7 @@ monthSelect.addEventListener("change", () => {
 //* Ограничение по количеству дней
 countDaysInput.addEventListener("input", constraintCountDaysInput);
 //* Возможен ввод только числовых значений
-countDaysInput.addEventListener("input", (e) => inputOnlyDigit(e));
+countDaysInput.addEventListener("input", (e) => Validation.inputOnlyDigit(e));
 //* Когда пользователь нажимает мне модального окна
 window.addEventListener("click", (e) => {
     if (e.target === modal.ModalWindow)
@@ -110,4 +110,27 @@ function constraintCountDaysInput() {
     if (countDays > new Month(month).getDaysPerMonth()) {
         countDaysInput.value = new Month(month).getDaysPerMonth().toString() + "₽";
     }
+}
+// Получение введенных значений
+function getInputValues() {
+    const month = new Month(EnumMonth[monthSelect.value]);
+    const fullNameChild = fullNameChildInput.value;
+    const countDays = +countDaysInput.value;
+    const otherService = new Service(EnumService[otherServiceSelect.value]);
+    return { month, fullNameChild, countDays, otherService };
+}
+// Проверка введенных данных
+function checkInputData() {
+    const [checkFieldsFilled, checkFullName, checkCountDays] = [
+        Validation.checkFieldsFilled(monthSelect, fullNameChildInput, countDaysInput, otherServiceSelect),
+        Validation.checkFullName(fullNameChildInput.value),
+        Validation.checkCountDays(+countDaysInput.value),
+    ];
+    if (!checkFieldsFilled.status)
+        return checkFieldsFilled;
+    if (!checkFullName.status)
+        return checkFullName;
+    if (!checkCountDays.status)
+        return checkCountDays;
+    return { status: true, text: "Все данные корректны!" };
 }

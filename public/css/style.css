@@ -72,6 +72,24 @@ html {
   cursor: pointer;
 }
 
+.modal__text {
+  font-weight: 700;
+}
+
+.modal__error {
+  color: red;
+}
+.modal__error::before {
+  content: " ❗ ";
+}
+
+.modal__success {
+  color: green;
+}
+.modal__success::before {
+  content: " ✔ ";
+}
+
 .main {
   background: rgb(179, 180, 58);
   background: linear-gradient(331deg, rgb(179, 180, 58) 15%, rgb(67, 219, 43) 35%, rgb(29, 253, 224) 53%, rgb(69, 150, 252) 74%, rgb(252, 69, 137) 88%);
@@ -152,7 +170,7 @@ html {
   border-radius: 4px;
   padding: 0.8em 0.6em;
   width: 8rem;
-  transition-duration: 0.2s;
+  transition-duration: 0.3s;
 }
 
 .submit-btn:hover,
@@ -165,6 +183,12 @@ html {
 .reset-btn:active,
 .reset-btn:focus {
   background-color: #f06767;
+}
+
+.send-btn:hover,
+.send-btn:active,
+.send-btn:focus {
+  background-color: #67f067;
 }
 
 .result-container {

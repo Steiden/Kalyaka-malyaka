@@ -1,25 +1,25 @@
+// * Импорт библиотек
 const express = require("express");
 const mongoose = require('mongoose');
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const path = require("path");
+require("dotenv").config();
 
+// * Импорт маршрутов
 const apiOrderRoutes = require("./routes/api-order-routes");
 
 const app = express();
 
-const PORT = 3000;
-const db = `mongodb+srv://steiden:C3C2SZJLKh9rAsID@main.hdz1pvg.mongodb.net/Kalyaka-Malyaka?retryWrites=true&w=majority`;
-
 // * Подключение к БД
 mongoose
-    .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
+    .connect(process.env.DB, { useNewUrlParser: true, useUnifiedTopology: true })
     .then((res) => console.log("Connected to DB"))
     .catch((err) => console.log(err))
 
 // * Создание сервера
-app.listen(PORT, (error) => {
-    error ? console.log(error) : console.log(`Server is running on port ${PORT}`);
+app.listen(process.env.PORT, (error) => {
+    error ? console.log(error) : console.log(`Server is running`);
 });
 
 // * Настройка сервера
@@ -38,7 +38,7 @@ app.get("/", (req, res) => {
 app.use(apiOrderRoutes);
 
 app.use((res, req) => {
-    res.status(404);
+    res.statusCode = 400;
 });
 
 // TODO Реализовать подгрузку Месяца и Сервиса с БД

@@ -1,14 +1,16 @@
 const Order = require("../models/order");
 
-
+// * Добавление заказа
 function addOrder(req, res) {
     const { month, fullNameChild, countDays, otherService } = req.body;
 
     let order;
 
-    if(!month || !fullNameChild || !countDays) {
+    // ? Проверка введенных значений
+    if(checkData(month, fullNameChild, countDays)) {
         return res.status(400).json({message: "Заполните все поля!"});
     }
+
     if(!otherService) {
         order = new Order({
             month,
@@ -30,6 +32,69 @@ function addOrder(req, res) {
         .catch(err => res.status(500).json(err))
 }
 
+// * Получение заказов
+function getOrder(req, res) {
+    Order.find()
+        .then(order => res.status(200).json(order))
+        .catch(err => res.status(500).json(err))
+}
+
+// * Получение конкретного заказа
+function getOrderById(req, res) {
+    const orderId = req.params.id;
+
+    Order.findById(orderId)
+        .then(order => res.status(200).json(order))
+        .catch(err => res.status(500).json(err))
+}
+
+// * Удаление заказа
+function deleteOrder(req, res) {
+    const orderId = req.params.id;
+
+    Order.findByIdAndDelete(orderId)
+        .then(() => res.status(200).json({ message: "Order deleted successfully" }))
+        .catch(err => res.status(500).json(err));
+}
+
+// * Обновление заказа
+function updateOrder(req, res) {
+    const orderId = req.params.id;
+    const { month, fullNameChild, countDays, otherService } = req.body;
+
+    // ? Проверка введенных значений
+    if (checkData(month, fullNameChild, countDays)) {
+        return res.status(400).json({ message: "Please provide all required input values" });
+    }
+
+    if (!otherService) {
+        Order.findByIdAndUpdate(orderId, { month, fullNameChild, countDays })
+            .then(() => res.status(200).json({ message: "Order updated successfully" }))
+            .catch(err => res.status(500).json(err));
+    }
+    else {
+        Order.findByIdAndUpdate(orderId, { month, fullNameChild, countDays, otherService })
+            .then(() => res.status(200).json({ message: "Order updated successfully" }))
+            .catch(err => res.status(500).json(err));
+    }
+}
+
+
 module.exports = {
-    addOrder
+    addOrder,
+    getOrder,
+    getOrderById,
+    deleteOrder,
+    updateOrder
+}
+
+
+// ! Отдельные функции
+
+// Проверка полученных значений
+function checkData(...data) {
+    for (const value of object) {
+        if(!value) return false;
+    }
+    return true;
 }

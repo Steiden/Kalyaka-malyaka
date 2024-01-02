@@ -22,7 +22,25 @@ const modal: Modal = new Modal(
 
 // ! События
 
-//* Отправка данных на сервер
+// * При загрузке окна
+window.addEventListener("load", (e) => {
+
+    // Добавление позиций из месяцев в выпадающий список
+    fetch("/api/get-orders")
+        .then(res => res.json())
+        .then((data) => {
+            // data.forEach((item) => {
+            //     const option = document.createElement("option");
+            //     option.value = item.Month;
+            //     option.textContent = item.Month;
+            //     monthSelect.appendChild(option);
+            // })
+            console.log(data);
+            
+        })
+});
+
+// * Отправка данных на сервер
 sendButton.addEventListener("click", () => {
     // Получение введенных значений
     let { month, fullNameChild, countDays, otherService } = getInputValues();
@@ -58,7 +76,7 @@ sendButton.addEventListener("click", () => {
         });
 });
 
-//* При отправке формы
+// * При отправке формы
 form.addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -92,7 +110,7 @@ form.addEventListener("submit", (e) => {
     resultInput.value = String(calcPriceService(month, otherService, countDays)) + "₽";
 });
 
-//* Очистка формы
+// * Очистка формы
 form.addEventListener("reset", (e) => {
     form.reset();
 
@@ -100,7 +118,7 @@ form.addEventListener("reset", (e) => {
     resultBlock.remove();
 });
 
-//* Вывод цены за день при выборе месяца
+// * Вывод цены за день при выборе месяца
 monthSelect.addEventListener("change", () => {
     // Вывод цены за день при выборе месяца
     priceOneDayInput.value = String(new Month(EnumMonth[monthSelect.value as keyof typeof EnumMonth]).getTimeYear().getPriceOneDay()) + "₽";
@@ -108,23 +126,23 @@ monthSelect.addEventListener("change", () => {
     constraintCountDaysInput();
 });
 
-//* Ограничение по количеству дней
+// * Ограничение по количеству дней
 countDaysInput.addEventListener("input", constraintCountDaysInput);
 
-//* Возможен ввод только числовых значений
+// * Возможен ввод только числовых значений
 countDaysInput.addEventListener("input", (e) => Validation.inputOnlyDigit(e));
 
-//* Когда пользователь нажимает мне модального окна
+// * Когда пользователь нажимает мне модального окна
 window.addEventListener("click", (e) => {
     if (e.target === modal.ModalWindow) modal.close();
 });
-//* Когда пользователь нажал клавишу клавиатуры
+// * Когда пользователь нажал клавишу клавиатуры
 window.addEventListener("keydown", (e) => {
     // Закрыть модальное окно, если нажата клавиша Escape
     if (e.key === "Escape") modal.close();
 });
 
-//! Функции
+// ! Функции
 
 // Ограничение по количеству дней в месяце
 function constraintCountDaysInput(): void {

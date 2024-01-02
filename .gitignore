@@ -6,6 +6,6 @@
 
 # Other
 /node_modules/
-/tsconfig.json
-/public/ts
-/public/scss
+# /tsconfig.json
+# /public/ts
+# /public/scss

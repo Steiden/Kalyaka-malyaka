@@ -1,0 +1,11 @@
+@keyframes backgroundAnimation {
+    0% {
+        background-size: 100%;
+    }
+    50% {
+        background-size: 300%;
+    }
+    100% {
+        background-size: 100%;
+    }
+}

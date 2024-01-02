@@ -1,0 +1,6 @@
+@media (width <= 600px) {
+    .form__content {
+        @include grid-template($rows: auto, $columns: 1fr, $gap: 15px);
+
+    }
+}

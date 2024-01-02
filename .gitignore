@@ -9,4 +9,4 @@ node_modules
 # /tsconfig.json
 # /public/ts
 # /public/scss
-.env
+# .env

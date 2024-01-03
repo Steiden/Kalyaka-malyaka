@@ -8,17 +8,24 @@ require("dotenv").config();
 
 // * Импорт маршрутов
 const apiOrderRoutes = require("./routes/api-order-routes");
+const apiMonthRoutes = require("./routes/api-month-routes");
+const apiServiceRoutes = require("./routes/api-service-routes");
 
 const app = express();
 
+// * Переменные
+let PORT = process.env.PORT | 3000;
+let db = process.env.DB;
+
+
 // * Подключение к БД
 mongoose
-    .connect(process.env.DB, { useNewUrlParser: true, useUnifiedTopology: true })
+    .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
     .then((res) => console.log("Connected to DB"))
     .catch((err) => console.log(err))
 
 // * Создание сервера
-app.listen(process.env.PORT, (error) => {
+app.listen(PORT, (error) => {
     error ? console.log(error) : console.log(`Server is running`);
 });
 
@@ -29,6 +36,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static("./public"));
 
+
 // * Загрузка главной страницы
 app.get("/", (req, res) => {
     res.sendFile(path.resolve(__dirname, "public/views", "index.html"));
@@ -36,7 +44,11 @@ app.get("/", (req, res) => {
 
 // * Подключение маршрутов
 app.use(apiOrderRoutes);
+app.use(apiMonthRoutes);
+app.use(apiServiceRoutes);
 
+
+// * Обработка ошибок
 app.use((res, req) => {
     res.statusCode = 400;
 });

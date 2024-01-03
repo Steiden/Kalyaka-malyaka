@@ -13,7 +13,7 @@ const router = express.Router();
 router.post('/api/add-order', addOrder);
 
 // * Получение заказов
-router.get('/api/get-orders', getOrder);
+router.get('/api/get-order', getOrder);
 
 // * Получение конкретного заказа
 router.get('/api/get-order/:id', getOrderById);

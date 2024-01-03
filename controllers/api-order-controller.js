@@ -1,5 +1,8 @@
 const Order = require("../models/order");
 
+// * Импорт
+const checkData = require("../helpers/checkData");
+
 // * Добавление заказа
 function addOrder(req, res) {
     const { month, fullNameChild, countDays, otherService } = req.body;
@@ -69,12 +72,12 @@ function updateOrder(req, res) {
 
     if (!otherService) {
         Order.findByIdAndUpdate(orderId, { month, fullNameChild, countDays })
-            .then(() => res.status(200).json({ message: "Order updated successfully" }))
+            .then((order) => res.status(200).json({ order: order, message: "Order updated successfully" }))
             .catch(err => res.status(500).json(err));
     }
     else {
         Order.findByIdAndUpdate(orderId, { month, fullNameChild, countDays, otherService })
-            .then(() => res.status(200).json({ message: "Order updated successfully" }))
+            .then((order) => res.status(200).json({ order: order, message: "Order updated successfully" }))
             .catch(err => res.status(500).json(err));
     }
 }
@@ -86,15 +89,4 @@ module.exports = {
     getOrderById,
     deleteOrder,
     updateOrder
-}
-
-
-// ! Отдельные функции
-
-// Проверка полученных значений
-function checkData(...data) {
-    for (const value of object) {
-        if(!value) return false;
-    }
-    return true;
 }

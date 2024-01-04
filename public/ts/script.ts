@@ -1,10 +1,11 @@
+// * Импорты
 import { EnumTimeYear, EnumMonth, EnumService } from "./modules/enumerables.js";
 import { Month, TimeYear, Service } from "./modules/calculationClasses.js";
 import { calcPriceService } from "./modules/calculation.js";
 import { Validation } from "./modules/validation.js";
 import { Modal } from "./modules/modal.js";
 
-// Получение элементов формы
+// * Получение элементов формы
 const form: HTMLFormElement = document.getElementById("form") as HTMLFormElement;
 const monthSelect: HTMLSelectElement = document.getElementById("monthSelect") as HTMLSelectElement;
 const priceOneDayInput: HTMLInputElement = document.getElementById("priceOneDay") as HTMLInputElement;
@@ -20,33 +21,36 @@ const modal: Modal = new Modal(
     document.getElementById("modalContent") as HTMLElement
 );
 
+// * Типы
+type TypeMonth = {
+    name: string;
+    nameRus: string;
+    countDays: number;
+    price: number;
+    order: number;
+};
+type TypeService = {
+    name: string;
+    nameRus: string;
+    price: number;
+};
+type TypeOrder = {
+    month: TypeMonth;
+    fullNameChild: string;
+    countDays: number;
+    otherService: TypeService;
+};
+
 // ! События
 
 // * При загрузке окна
 window.addEventListener("load", (e) => {
-
-    type TypeMonth = {
-        name: string,
-        nameRus: string,
-        countDays: number,
-        price: number,
-        order: number,
-    };
-    type TypeService = {
-        name: string,
-        price: number
-    }
-
     // Подгрузка месяцев в monthSelect
     fetch("/api/get-month")
         .then((res) => res.json())
-        .then((data) => {
-            const months: TypeMonth[] = data;
-
+        .then((months: TypeMonth[]) => {
             // Сортировка месяцев
-            months.sort((a, b) => {
-                return a.order > b.order ? 1 : -1;
-            })
+            months.sort((a, b) => (a.order > b.order ? 1 : -1));
 
             // Заполнение monthSelect
             months.forEach((month) => {
@@ -54,11 +58,28 @@ window.addEventListener("load", (e) => {
                 option.value = month.name;
                 option.textContent = month.nameRus;
                 monthSelect.appendChild(option);
-            })
+            });
         })
         .catch((err) => {
             console.error(err);
             modal.setError().setText("Ошибка загрузки месяцев. Попробуйте еще раз").show();
+        });
+
+    // Подгрузка услуг в otherService
+    fetch("/api/get-service")
+        .then((res) => res.json())
+        .then((services: TypeService[]) => {
+            // Заполнение otherService
+            services.forEach((service) => {
+                const option = document.createElement("option");
+                option.value = service.name;
+                option.textContent = service.nameRus;
+                otherServiceSelect.appendChild(option);
+            });
+        })
+        .catch((err) => {
+            console.error(err);
+            modal.setError().setText("Ошибка загрузки услуг. Попробуйте еще раз").show();
         })
 });
 
@@ -191,12 +212,11 @@ function getInputValues(): { month: Month; fullNameChild: string; countDays: num
 
 // Проверка введенных данных
 function checkInputData(): { status: boolean; text: string } {
-
-    const [checkFieldsFilled, checkFullName, checkCountDays]: Array<{ status: boolean, text: string }> = [
+    const [checkFieldsFilled, checkFullName, checkCountDays]: Array<{ status: boolean; text: string }> = [
         Validation.checkFieldsFilled(monthSelect, fullNameChildInput, countDaysInput, otherServiceSelect),
         Validation.checkFullName(fullNameChildInput.value),
         Validation.checkCountDays(+countDaysInput.value),
-    ]
+    ];
 
     if (!checkFieldsFilled.status) return checkFieldsFilled;
     if (!checkFullName.status) return checkFullName;

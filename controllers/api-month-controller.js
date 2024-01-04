@@ -5,10 +5,10 @@ const checkData = require("../helpers/checkData");
 
 // * Добавление месяца
 function addMonth(req, res) {
-    const { name, nameRus, countDays, price } = req.body;
+    const { name, nameRus, countDays, price, order } = req.body;
 
     // ? Проверка введенных значений
-    if (checkData(name, nameRus, countDays, price)) {
+    if (!checkData(name, nameRus, countDays, price, order)) {
         return res.status(400).json({ message: "Заполните все поля!" });
     }
 
@@ -17,6 +17,7 @@ function addMonth(req, res) {
         nameRus,
         countDays,
         price,
+        order
     });
 
     month
@@ -53,14 +54,14 @@ function deleteMonth(req, res) {
 // * Обновление месяца
 function updateMonth(req, res) {
     const monthId = req.params.id;
-    const { name, nameRus, countDays, price } = req.body;
+    const { name, nameRus, countDays, price, order } = req.body;
 
     // ? Проверка введенных значений
-    if (checkData(name, nameRus, countDays, price)) {
+    if (checkData(name, nameRus, countDays, price, order)) {
         return res.status(400).json({ message: "Заполните все поля!" });
     }
 
-    Order.findByIdAndUpdate(monthId, { name, nameRus, countDays, price })
+    Order.findByIdAndUpdate(monthId, { name, nameRus, countDays, price, order })
         .then((month) => res.status(200).json({month: month, message: "Order updated successfully" }))
         .catch((err) => res.status(500).json(err));
 }

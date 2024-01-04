@@ -16,6 +16,10 @@ const Month = new Schema({
     price: {
         type: Number,
         required: true
+    },
+    order: {
+        type: Number,
+        required: true
     }
 
 }, { timestamps: true });

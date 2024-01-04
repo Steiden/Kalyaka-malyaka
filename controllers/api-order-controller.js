@@ -10,7 +10,7 @@ function addOrder(req, res) {
     let order;
 
     // ? Проверка введенных значений
-    if(checkData(month, fullNameChild, countDays)) {
+    if(!checkData(month, fullNameChild, countDays)) {
         return res.status(400).json({message: "Заполните все поля!"});
     }
 

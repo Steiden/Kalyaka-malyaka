@@ -1,9 +1,10 @@
+// * Импорты
 import { EnumMonth, EnumService } from "./modules/enumerables.js";
 import { Month, Service } from "./modules/calculationClasses.js";
 import { calcPriceService } from "./modules/calculation.js";
 import { Validation } from "./modules/validation.js";
 import { Modal } from "./modules/modal.js";
-// Получение элементов формы
+// * Получение элементов формы
 const form = document.getElementById("form");
 const monthSelect = document.getElementById("monthSelect");
 const priceOneDayInput = document.getElementById("priceOneDay");
@@ -19,12 +20,9 @@ window.addEventListener("load", (e) => {
     // Подгрузка месяцев в monthSelect
     fetch("/api/get-month")
         .then((res) => res.json())
-        .then((data) => {
-        const months = data;
+        .then((months) => {
         // Сортировка месяцев
-        months.sort((a, b) => {
-            return a.order > b.order ? 1 : -1;
-        });
+        months.sort((a, b) => (a.order > b.order ? 1 : -1));
         // Заполнение monthSelect
         months.forEach((month) => {
             const option = document.createElement("option");
@@ -36,6 +34,22 @@ window.addEventListener("load", (e) => {
         .catch((err) => {
         console.error(err);
         modal.setError().setText("Ошибка загрузки месяцев. Попробуйте еще раз").show();
+    });
+    // Подгрузка услуг в otherService
+    fetch("/api/get-service")
+        .then((res) => res.json())
+        .then((services) => {
+        // Заполнение otherService
+        services.forEach((service) => {
+            const option = document.createElement("option");
+            option.value = service.name;
+            option.textContent = service.nameRus;
+            otherServiceSelect.appendChild(option);
+        });
+    })
+        .catch((err) => {
+        console.error(err);
+        modal.setError().setText("Ошибка загрузки услуг. Попробуйте еще раз").show();
     });
 });
 // * Отправка данных на сервер

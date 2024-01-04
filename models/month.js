@@ -1,7 +1,6 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const { Schema, model} = require('mongoose');
 
-const monthSchema = new Schema({
+const Month = new Schema({
     name: {
         type: String,
         required: true
@@ -21,5 +20,4 @@ const monthSchema = new Schema({
 
 }, { timestamps: true });
 
-const Month = mongoose.model("Month", monthSchema);
-module.exports = Month;
+module.exports = model("Month", Month);

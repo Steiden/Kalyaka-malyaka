@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const { Schema, model} = require('mongoose');
 
-const orderSchema = new Schema({
+
+const Order = new Schema({
     month: {
         type: String,
         required: true
@@ -20,5 +20,4 @@ const orderSchema = new Schema({
     }
 }, { timestamps: true });
 
-const Order = mongoose.model("Order", orderSchema);
-module.exports = Order;
+module.exports = model("Order", Order);

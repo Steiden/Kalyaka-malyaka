@@ -14,6 +14,10 @@ const otherServiceSelect = document.getElementById("otherService");
 const sendButton = document.getElementById("send-btn");
 // Формирование модального окна
 const modal = new Modal(document.getElementById("modal"), document.getElementById("modalClose"), document.getElementById("modalContent"));
+// * Переменные данных
+let monthArray;
+let serviceArray;
+let orderArray;
 // ! События
 // * При загрузке окна
 window.addEventListener("load", (e) => {
@@ -21,10 +25,11 @@ window.addEventListener("load", (e) => {
     fetch("/api/get-month")
         .then((res) => res.json())
         .then((months) => {
+        monthArray = months;
         // Сортировка месяцев
-        months.sort((a, b) => (a.order > b.order ? 1 : -1));
+        monthArray.sort((a, b) => (a.order > b.order ? 1 : -1));
         // Заполнение monthSelect
-        months.forEach((month) => {
+        monthArray.forEach((month) => {
             const option = document.createElement("option");
             option.value = month.name;
             option.textContent = month.nameRus;
@@ -39,8 +44,9 @@ window.addEventListener("load", (e) => {
     fetch("/api/get-service")
         .then((res) => res.json())
         .then((services) => {
+        serviceArray = services;
         // Заполнение otherService
-        services.forEach((service) => {
+        serviceArray.forEach((service) => {
             const option = document.createElement("option");
             option.value = service.name;
             option.textContent = service.nameRus;
@@ -111,7 +117,9 @@ form.addEventListener("submit", (e) => {
     document.querySelector(".form__content").insertAdjacentHTML("beforeend", resultBlock);
     // Вывод суммы
     const resultInput = document.getElementById("result");
-    resultInput.value = String(calcPriceService(month, otherService, countDays)) + "₽";
+    const priceOneDay = monthArray.find(m => m.name === monthSelect.value)?.price || 0;
+    const servicePrice = serviceArray.find(s => s.name === otherServiceSelect.value)?.price || 0;
+    resultInput.value = String(calcPriceService(priceOneDay, servicePrice, countDays)) + "₽";
 });
 // * Очистка формы
 form.addEventListener("reset", (e) => {
@@ -121,8 +129,8 @@ form.addEventListener("reset", (e) => {
 });
 // * Вывод цены за день при выборе месяца
 monthSelect.addEventListener("change", () => {
-    // Вывод цены за день при выборе месяца
-    priceOneDayInput.value = String(new Month(EnumMonth[monthSelect.value]).getTimeYear().getPriceOneDay()) + "₽";
+    // Вывод цены за день при выборе месяца    
+    priceOneDayInput.value = monthArray.find(month => month.name === monthSelect.value)?.price + "₽";
     constraintCountDaysInput();
 });
 // * Ограничение по количеству дней
@@ -162,7 +170,7 @@ function getInputValues() {
 // Проверка введенных данных
 function checkInputData() {
     const [checkFieldsFilled, checkFullName, checkCountDays] = [
-        Validation.checkFieldsFilled(monthSelect, fullNameChildInput, countDaysInput, otherServiceSelect),
+        Validation.checkFieldsFilled(monthSelect, fullNameChildInput, countDaysInput),
         Validation.checkFullName(fullNameChildInput.value),
         Validation.checkCountDays(+countDaysInput.value),
     ];

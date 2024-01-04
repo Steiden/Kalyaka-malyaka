@@ -16,17 +16,26 @@ const modal = new Modal(document.getElementById("modal"), document.getElementByI
 // ! События
 // * При загрузке окна
 window.addEventListener("load", (e) => {
-    // Добавление позиций из месяцев в выпадающий список
-    fetch("/api/get-orders")
-        .then(res => res.json())
+    // Подгрузка месяцев в monthSelect
+    fetch("/api/get-month")
+        .then((res) => res.json())
         .then((data) => {
-        // data.forEach((item) => {
-        //     const option = document.createElement("option");
-        //     option.value = item.Month;
-        //     option.textContent = item.Month;
-        //     monthSelect.appendChild(option);
-        // })
-        console.log(data);
+        const months = data;
+        // Сортировка месяцев
+        months.sort((a, b) => {
+            return a.order > b.order ? 1 : -1;
+        });
+        // Заполнение monthSelect
+        months.forEach((month) => {
+            const option = document.createElement("option");
+            option.value = month.name;
+            option.textContent = month.nameRus;
+            monthSelect.appendChild(option);
+        });
+    })
+        .catch((err) => {
+        console.error(err);
+        modal.setError().setText("Ошибка загрузки месяцев. Попробуйте еще раз").show();
     });
 });
 // * Отправка данных на сервер
@@ -50,7 +59,7 @@ sendButton.addEventListener("click", () => {
     fetch("/api/add-order", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json; charset=UTF-8",
+            "Content-Type": "application/json",
         },
         body: JSON.stringify(dataToFetch),
     })
@@ -117,6 +126,8 @@ window.addEventListener("keydown", (e) => {
     if (e.key === "Escape")
         modal.close();
 });
+// * Закрытие модального окна
+modal.CloseButton.addEventListener("click", () => modal.close());
 // ! Функции
 // Ограничение по количеству дней в месяце
 function constraintCountDaysInput() {

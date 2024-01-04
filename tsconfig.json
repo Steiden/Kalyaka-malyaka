@@ -109,7 +109,7 @@
   "files": [
     "./public/ts/modules/caclualtionData.ts",
     "./public/ts/modules/calculation.ts",
-    "public/ts/modules/calculationClasses.ts",
+    "./public/ts/modules/calculationClasses.ts",
     "./public/ts/modules/enumerables.ts",
     "./public/ts/modules/modal.ts",
     "./public/ts/modules/validation.ts",

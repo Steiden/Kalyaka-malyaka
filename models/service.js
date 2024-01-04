@@ -1,4 +1,4 @@
-const Order = mongoose.model("Order", orderSchema);
+const { Schema, model} = require('mongoose');
 
 
 const Service = new Schema({

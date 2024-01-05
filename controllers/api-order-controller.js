@@ -5,28 +5,28 @@ const checkData = require("../helpers/checkData");
 
 // * Добавление заказа
 function addOrder(req, res) {
-    const { month, fullNameChild, countDays, otherService } = req.body;
+    const { month_id, fullNameChild, countDays, service_id } = req.body;
 
     let order;
 
     // ? Проверка введенных значений
-    if(!checkData(month, fullNameChild, countDays)) {
+    if(!checkData(month_id, fullNameChild, countDays)) {
         return res.status(400).json({message: "Заполните все поля!"});
     }
 
-    if(!otherService) {
+    if(!service_id) {
         order = new Order({
-            month,
+            month_id,
             fullNameChild,
             countDays
         })
     }
     else {
         order = new Order({
-            month,
+            month_id,
             fullNameChild,
             countDays,
-            otherService
+            service_id
         })
     }
 
@@ -63,20 +63,20 @@ function deleteOrder(req, res) {
 // * Обновление заказа
 function updateOrder(req, res) {
     const orderId = req.params.id;
-    const { month, fullNameChild, countDays, otherService } = req.body;
+    const { month_id, fullNameChild, countDays, service_id } = req.body;
 
     // ? Проверка введенных значений
-    if (checkData(month, fullNameChild, countDays)) {
+    if (checkData(month_Id, fullNameChild, countDays)) {
         return res.status(400).json({ message: "Please provide all required input values" });
     }
 
     if (!otherService) {
-        Order.findByIdAndUpdate(orderId, { month, fullNameChild, countDays })
+        Order.findByIdAndUpdate(orderId, { month_id, fullNameChild, countDays })
             .then((order) => res.status(200).json({ order: order, message: "Order updated successfully" }))
             .catch(err => res.status(500).json(err));
     }
     else {
-        Order.findByIdAndUpdate(orderId, { month, fullNameChild, countDays, otherService })
+        Order.findByIdAndUpdate(orderId, { month_id, fullNameChild, countDays, service_id })
             .then((order) => res.status(200).json({ order: order, message: "Order updated successfully" }))
             .catch(err => res.status(500).json(err));
     }

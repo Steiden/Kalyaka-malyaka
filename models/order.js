@@ -1,9 +1,10 @@
+const { ObjectId } = require('mongodb');
 const { Schema, model} = require('mongoose');
 
 
 const Order = new Schema({
-    month: {
-        type: String,
+    month_id: {
+        type: ObjectId,
         required: true
     },
     fullNameChild: {
@@ -14,8 +15,8 @@ const Order = new Schema({
         type: Number,
         required: true
     },
-    otherService: {
-        type: String,
+    service_id: {
+        type: ObjectId,
         required: false
     }
 }, { timestamps: true });

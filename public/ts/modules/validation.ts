@@ -1,3 +1,5 @@
+import { TypeValidation } from "./types";
+
 export class Validation {
     // * Функция ограничения ввода только числовых символов
     static inputOnlyDigit(e: Event): boolean {
@@ -22,7 +24,7 @@ export class Validation {
     }
 
     // * Проверка заполненности полей
-    static checkFieldsFilled(...fields: Array<HTMLInputElement | HTMLSelectElement>): { status: boolean; text: string } {
+    static checkFieldsFilled(...fields: Array<HTMLInputElement | HTMLSelectElement>): TypeValidation {
         
         for (const field of fields) {
             if (field.value.trim() === "") {
@@ -34,7 +36,7 @@ export class Validation {
     }
 
     // * Проверка ФИО
-    static checkFullName(fullName: string): { status: boolean; text: string } {
+    static checkFullName(fullName: string): TypeValidation {
         if (fullName.split(" ").length != 3) {
             return { status: false, text: "Некорректное ФИО ребенка!" };
         }
@@ -48,7 +50,7 @@ export class Validation {
     }
 
     // * Проверка количества дней
-    static checkCountDays(countDays: number): { status: boolean; text: string } {
+    static checkCountDays(countDays: number): TypeValidation {
         if (countDays <= 0 || countDays > 31) {
             return { status: false, text: "Количество дней не может быть равно нулю или больше 31!" };
         }

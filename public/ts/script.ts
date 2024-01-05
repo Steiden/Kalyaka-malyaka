@@ -1,6 +1,7 @@
 // * Импорты
 import { EnumTimeYear, EnumMonth, EnumService } from "./modules/enumerables.js";
 import { Month, TimeYear, Service } from "./modules/calculationClasses.js";
+import { TypeMonth, TypeService, TypeOrder, TypeValidation } from "./modules/types.js";
 import { calcPriceService } from "./modules/calculation.js";
 import { Validation } from "./modules/validation.js";
 import { Modal } from "./modules/modal.js";
@@ -21,30 +22,11 @@ const modal: Modal = new Modal(
     document.getElementById("modalContent") as HTMLElement
 );
 
-// * Типы
-type TypeMonth = {
-    name: string;
-    nameRus: string;
-    countDays: number;
-    price: number;
-    order: number;
-};
-type TypeService = {
-    name: string;
-    nameRus: string;
-    price: number;
-};
-type TypeOrder = {
-    month: TypeMonth;
-    fullNameChild: string;
-    countDays: number;
-    otherService: TypeService;
-};
 
 // * Переменные данных
-let monthArray: TypeMonth[];
-let serviceArray: TypeService[];
-let orderArray: TypeOrder[];
+let monthArray: TypeMonth[];    // Месяцы, полученные с БД
+let serviceArray: TypeService[];    // Сервисы, полученные с БД
+let orderArray: TypeOrder[];    // Заказы, полученные с БД
 
 // ! События
 
@@ -98,7 +80,7 @@ sendButton.addEventListener("click", () => {
     let { month, fullNameChild, countDays, otherService } = getInputValues();
 
     //? Проверка введенных значений
-    const checkInput: { status: boolean; text: string } = checkInputData();
+    const checkInput: TypeValidation = checkInputData();
     if (!checkInput.status) {
         modal.setError().setText(checkInput.text).show();
         return;
@@ -106,10 +88,10 @@ sendButton.addEventListener("click", () => {
 
     // Формирование данных для отправки
     const dataToFetch = {
-        month: month.Month,
+        month_id: monthArray.find(m => m.nameRus === month.Month)?._id || "",
         fullNameChild: fullNameChild,
         countDays: countDays,
-        otherService: otherService.Service ? otherService.Service : "",
+        service_id: otherService.Service ? serviceArray.find(s => s.nameRus === otherService.Service)?._id || "" : "",
     };
 
     // * Отпаврка запроса на сервер
@@ -222,8 +204,8 @@ function getInputValues(): { month: Month; fullNameChild: string; countDays: num
 }
 
 // Проверка введенных данных
-function checkInputData(): { status: boolean; text: string } {
-    const [checkFieldsFilled, checkFullName, checkCountDays]: Array<{ status: boolean; text: string }> = [
+function checkInputData(): TypeValidation {
+    const [checkFieldsFilled, checkFullName, checkCountDays]: TypeValidation[] = [
         Validation.checkFieldsFilled(monthSelect, fullNameChildInput, countDaysInput),
         Validation.checkFullName(fullNameChildInput.value),
         Validation.checkCountDays(+countDaysInput.value),

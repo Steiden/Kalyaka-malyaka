@@ -15,9 +15,9 @@ const sendButton = document.getElementById("send-btn");
 // Формирование модального окна
 const modal = new Modal(document.getElementById("modal"), document.getElementById("modalClose"), document.getElementById("modalContent"));
 // * Переменные данных
-let monthArray;
-let serviceArray;
-let orderArray;
+let monthArray; // Месяцы, полученные с БД
+let serviceArray; // Сервисы, полученные с БД
+let orderArray; // Заказы, полученные с БД
 // ! События
 // * При загрузке окна
 window.addEventListener("load", (e) => {
@@ -70,10 +70,10 @@ sendButton.addEventListener("click", () => {
     }
     // Формирование данных для отправки
     const dataToFetch = {
-        month: month.Month,
+        month_id: monthArray.find(m => m.nameRus === month.Month)?._id || "",
         fullNameChild: fullNameChild,
         countDays: countDays,
-        otherService: otherService.Service ? otherService.Service : "",
+        service_id: otherService.Service ? serviceArray.find(s => s.nameRus === otherService.Service)?._id || "" : "",
     };
     // * Отпаврка запроса на сервер
     fetch("/api/add-order", {

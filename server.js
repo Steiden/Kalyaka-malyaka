@@ -2,7 +2,6 @@
 const express = require("express");
 const mongoose = require('mongoose');
 const morgan = require("morgan");
-// const bodyParser = require("body-parser");
 const path = require("path");
 require("dotenv").config();
 
@@ -20,7 +19,7 @@ let db = process.env.DB;
 
 // * Подключение к БД
 mongoose
-    .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
+    .connect(db)
     .then((res) => console.log("Connected to DB"))
     .catch((err) => console.log(err))
 
@@ -51,5 +50,3 @@ app.use(apiServiceRoutes);
 app.use((res, req) => {
     res.statusCode = 400;
 });
-
-// TODO Реализовать подгрузку Месяца и Сервиса с БД

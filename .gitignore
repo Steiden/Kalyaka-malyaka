@@ -7,6 +7,6 @@
 # Other
 node_modules
 # /tsconfig.json
-# /public/ts
+# /public/js
 # /public/scss
 # .env
